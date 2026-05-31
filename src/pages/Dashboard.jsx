@@ -66,6 +66,7 @@ const Dashboard = () => {
 
   const goToDrivers = () => window.location.href = '/drivers'
   const goToShipments = () => window.location.href = '/shipments'
+  const goToFleet = () => window.location.href = '/fleet'
 
   const handleLogout = () => {
     localStorage.removeItem('token')
@@ -135,7 +136,7 @@ const Dashboard = () => {
           </div>
 
           {/* Card Fleet */}
-          <div style={styles.card}>
+          <div style={{...styles.card, ...styles.cardClickable}} onClick={goToFleet}>
             <div style={styles.cardIcon}>🚛</div>
             <p style={styles.cardLabel}>Total Fleet</p>
             <h2 style={styles.cardNumber}>{stats.totalFleet}</h2>

@@ -6,7 +6,7 @@ import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import Drivers from './pages/Drivers'
 import Shipments from './pages/Shipments'
-
+import Fleet from './pages/Fleet'
 
 // Komponen untuk proteksi halaman
 // Kalau belum login → paksa balik ke /login
@@ -42,6 +42,10 @@ function App() {
           <ProtectedRoute>
             <Drivers />
           </ProtectedRoute>
+        } />
+
+        <Route path="/fleet" element={
+          <ProtectedRoute><Fleet /></ProtectedRoute>
         } />
 
         <Route path="/shipments" element={
