@@ -1,170 +1,252 @@
 // pages/Login.jsx
-
-// Import useState — untuk simpan data yang berubah-ubah
-// Analoginya: useState = "kotak penyimpanan" yang bisa diupdate
 import { useState } from 'react'
-
-// Import api.js yang sudah kita buat — kurir ke TMS API
 import api from '../services/api'
 
-// Komponen Login — seperti "class" di Python tapi untuk UI
-// rafce = shortcut dari extension ES7+ React snippets!
 const Login = () => {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
-  // STATE — data yang bisa berubah dan trigger re-render
-  // Analoginya: seperti variabel di Python, tapi kalau berubah
-  // tampilan otomatis ikut update!
-  const [email, setEmail] = useState('')       // simpan input email
-  const [password, setPassword] = useState('') // simpan input password
-  const [error, setError] = useState('')        // simpan pesan error
-  const [loading, setLoading] = useState(false) // status loading
-
-  // Fungsi yang jalan saat user klik tombol Login
   const handleLogin = async () => {
-    
-    // Validasi sederhana — jangan kirim kalau kosong
     if (!email || !password) {
       setError('Email dan password wajib diisi!')
       return
     }
-
     try {
-      setLoading(true)   // tampilkan loading
-      setError('')        // reset error sebelumnya
-
-      // Kirim request POST ke /auth/login
-      // OAuth2 butuh format FormData, bukan JSON!
+      setLoading(true)
+      setError('')
       const formData = new FormData()
-      formData.append('username', email)    // backend expect 'username'
+      formData.append('username', email)
       formData.append('password', password)
-
       const response = await api.post('/auth/login', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       })
-
-      // Kalau berhasil → simpan token ke localStorage
-      // localStorage = "laci browser" yang persistent
       localStorage.setItem('token', response.data.access_token)
-
-      // Redirect ke dashboard
       window.location.href = '/dashboard'
-
     } catch (err) {
-      // Kalau gagal → tampilkan pesan error
       setError('Email atau password salah!')
     } finally {
-      setLoading(false)  // sembunyikan loading apapun hasilnya
+      setLoading(false)
     }
   }
 
-  // RETURN — ini yang ditampilkan ke layar (HTML nya)
+  // Handle enter key — tekan Enter = klik Login
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') handleLogin()
+  }
+
   return (
     <div style={styles.container}>
+
+      {/* Background decorative circles */}
+      <div style={styles.circle1} />
+      <div style={styles.circle2} />
+
+      {/* Login Card */}
       <div style={styles.card}>
 
-        {/* Header */}
-        <h1 style={styles.title}>🚛 TMS API</h1>
-        <p style={styles.subtitle}>Transportation Management System</p>
+        {/* Logo & Title */}
+        <div style={styles.logoContainer}>
+          <div style={styles.logoIcon}>🚛</div>
+          <h1 style={styles.title}>TMS</h1>
+          <p style={styles.subtitle}>Transportation Management System</p>
+        </div>
 
-        {/* Form Login */}
+        {/* Divider */}
+        <div style={styles.divider} />
+
+        {/* Form */}
         <div style={styles.form}>
+          <p style={styles.formTitle}>Sign in to your account</p>
 
-          {/* Input Email */}
-          <input
-            style={styles.input}
-            type="email"
-            placeholder="Email"
-            value={email}
-            // Setiap user ketik → update state email
-            onChange={(e) => setEmail(e.target.value)}
-          />
+          {/* Email Input */}
+          <div style={styles.inputGroup}>
+            <span style={styles.inputIcon}>✉️</span>
+            <input
+              style={styles.input}
+              type="email"
+              placeholder="Email address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              onKeyPress={handleKeyPress}
+            />
+          </div>
 
-          {/* Input Password */}
-          <input
-            style={styles.input}
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          {/* Password Input */}
+          <div style={styles.inputGroup}>
+            <span style={styles.inputIcon}>🔒</span>
+            <input
+              style={styles.input}
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              onKeyPress={handleKeyPress}
+            />
+          </div>
 
-          {/* Tampilkan error kalau ada */}
-          {error && <p style={styles.error}>{error}</p>}
+          {/* Error Message */}
+          {error && (
+            <div style={styles.errorBox}>
+              ⚠️ {error}
+            </div>
+          )}
 
-          {/* Tombol Login */}
+          {/* Login Button */}
           <button
-            style={styles.button}
+            style={{
+              ...styles.button,
+              // Kalau loading → warna lebih redup
+              opacity: loading ? 0.7 : 1,
+              cursor: loading ? 'not-allowed' : 'pointer'
+            }}
             onClick={handleLogin}
             disabled={loading}
           >
-            {loading ? 'Loading...' : 'Login'}
+            {loading ? (
+              // Loading state — animasi dots
+              <span>Signing in...</span>
+            ) : (
+              <span>Sign In →</span>
+            )}
           </button>
 
         </div>
+
+        {/* Footer */}
+        <p style={styles.footer}>
+          PT. Gares Setjahtera Abadi © 2026
+        </p>
+
       </div>
     </div>
   )
 }
 
-// STYLING — CSS dalam bentuk JavaScript object
 const styles = {
   container: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    height: '100vh',
-    backgroundColor: '#f0f2f5'
+    minHeight: '100vh',
+    backgroundColor: '#0f172a',  // dark navy background
+    position: 'relative',
+    overflow: 'hidden'
+  },
+  // Decorative background circles
+  circle1: {
+    position: 'absolute',
+    width: '400px',
+    height: '400px',
+    borderRadius: '50%',
+    backgroundColor: 'rgba(37, 99, 235, 0.15)',  // blue glow
+    top: '-100px',
+    right: '-100px'
+  },
+  circle2: {
+    position: 'absolute',
+    width: '300px',
+    height: '300px',
+    borderRadius: '50%',
+    backgroundColor: 'rgba(37, 99, 235, 0.1)',
+    bottom: '-80px',
+    left: '-80px'
   },
   card: {
-    backgroundColor: 'white',
-    padding: '40px',
-    borderRadius: '12px',
-    boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-    width: '90%',        
-    maxWidth: '380px',   
-    textAlign: 'center'
-},
-
-  
-  title: {
-    fontSize: '28px',
-    fontWeight: 'bold',
-    color: '#1a1a2e',
+    backgroundColor: '#1e293b',   // dark card
+    borderRadius: '20px',
+    padding: '48px 40px',
+    width: '90%',
+    maxWidth: '420px',
+    boxShadow: '0 25px 50px rgba(0,0,0,0.5)',
+    border: '1px solid rgba(255,255,255,0.08)',
+    position: 'relative',
+    zIndex: 1
+  },
+  logoContainer: {
+    textAlign: 'center',
+    marginBottom: '24px'
+  },
+  logoIcon: {
+    fontSize: '48px',
     marginBottom: '8px'
   },
+  title: {
+    color: 'white',
+    fontSize: '32px',
+    fontWeight: 'bold',
+    margin: '0 0 4px 0',
+    letterSpacing: '4px'
+  },
   subtitle: {
-    color: '#666',
-    marginBottom: '32px',
-    fontSize: '14px'
+    color: '#94a3b8',
+    fontSize: '13px',
+    margin: 0
+  },
+  divider: {
+    height: '1px',
+    backgroundColor: 'rgba(255,255,255,0.08)',
+    margin: '24px 0'
   },
   form: {
     display: 'flex',
     flexDirection: 'column',
     gap: '16px'
   },
+  formTitle: {
+    color: '#94a3b8',
+    fontSize: '14px',
+    margin: '0 0 8px 0',
+    textAlign: 'center'
+  },
+  inputGroup: {
+    display: 'flex',
+    alignItems: 'center',
+    backgroundColor: '#0f172a',
+    borderRadius: '10px',
+    border: '1px solid rgba(255,255,255,0.1)',
+    padding: '4px 16px',
+    gap: '12px'
+  },
+  inputIcon: {
+    fontSize: '16px'
+  },
   input: {
-    padding: '12px 16px',
+    flex: 1,
+    backgroundColor: 'transparent',
+    border: 'none',
+    outline: 'none',
+    color: 'white',
+    fontSize: '15px',
+    padding: '12px 0'
+  },
+  errorBox: {
+    backgroundColor: 'rgba(239, 68, 68, 0.15)',
+    border: '1px solid rgba(239, 68, 68, 0.3)',
     borderRadius: '8px',
-    border: '1px solid #ddd',
-    fontSize: '16px',
-    outline: 'none'
+    padding: '12px 16px',
+    color: '#fca5a5',
+    fontSize: '14px'
   },
   button: {
-    padding: '12px',
     backgroundColor: '#2563eb',
     color: 'white',
     border: 'none',
-    borderRadius: '8px',
+    borderRadius: '10px',
+    padding: '14px',
     fontSize: '16px',
-    cursor: 'pointer',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    marginTop: '8px',
+    letterSpacing: '0.5px'
   },
-  error: {
-    color: '#ef4444',
-    fontSize: '14px',
-    margin: '0'
+  footer: {
+    color: '#475569',
+    fontSize: '12px',
+    textAlign: 'center',
+    marginTop: '32px',
+    marginBottom: 0
   }
 }
 
-// Export komponen supaya bisa dipakai di App.jsx
 export default Login
