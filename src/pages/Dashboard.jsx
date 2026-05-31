@@ -66,6 +66,15 @@ const Dashboard = () => {
     }
   }
 
+  // Tambah fungsi navigasi
+const goToDrivers = () => {
+    window.location.href = '/drivers'
+  }
+
+const goToShipments = () => {
+    window.location.href = '/shipments'
+  }
+
   // Fungsi logout — hapus token & redirect ke login
   const handleLogout = () => {
     localStorage.removeItem('token')  // hapus token dari laci browser
@@ -109,14 +118,14 @@ const Dashboard = () => {
         <div style={styles.grid}>
 
           {/* Card Driver */}
-          <div style={styles.card}>
+          <div style={{...styles.card, cursor: 'pointer'}} onClick={goToDrivers}>
             <p style={styles.cardLabel}>Total Driver</p>
             <h2 style={styles.cardNumber}>{stats.totalDrivers}</h2>
             <p style={styles.cardSub}>🟢 {stats.activeDrivers} Active</p>
           </div>
 
           {/* Card Shipment */}
-          <div style={styles.card}>
+          <div style={{...styles.card, cursor: 'pointer'}} onClick={goToShipments}>
             <p style={styles.cardLabel}>Total Shipment</p>
             <h2 style={styles.cardNumber}>{stats.totalShipments}</h2>
             <p style={styles.cardSub}>🚚 {stats.inTransit} In Transit</p>

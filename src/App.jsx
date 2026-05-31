@@ -4,6 +4,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 // Import semua halaman
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
+import Drivers from './pages/Drivers'
+import Shipments from './pages/Shipments'
 
 
 // Komponen untuk proteksi halaman
@@ -35,6 +37,18 @@ function App() {
             <Dashboard />
           </ProtectedRoute>
         } />
+
+        <Route path="/drivers" element={
+          <ProtectedRoute>
+            <Drivers />
+          </ProtectedRoute>
+        } />
+
+        <Route path="/shipments" element={
+          <ProtectedRoute>
+            <Shipments />
+        </ProtectedRoute>
+        }/>
         
         {/* Root URL → redirect ke login dulu */}
         <Route path="/" element={<Navigate to="/login" />} />
